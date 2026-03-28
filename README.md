@@ -80,6 +80,32 @@ In return, the worker receives one week of income-loss protection against verifi
 * Medium Risk: ₹200/week
 * High Risk: ₹300/week
 ---
+
+# Insurance Design & Compliance
+Coverage Conditions (All must be satisfied):
+
+* Worker active during insured shift
+* Disruption exceeds threshold
+        (Rain > 20 mm/hr, AQI > 300, Temp > 40°C)
+* Activity drop ≥ 50% vs baseline
+* Opportunity Loss Score > 0.7
+
+Exclusions (No payout if):
+
+* Inactive before disruption
+* No delivery attempts during shift
+* GPS spoofing / device tampering detected
+* App offline / tracking disabled
+* No actual disruption in micro-zone
+
+Payout Limit:
+* Max = 50% of avg daily earnings
+(e.g., ₹600 → ₹300)
+
+Compliance Note:
+* Follows parametric insurance model (predefined triggers, transparent payouts)
+* Extendable to regulatory sandbox frameworks
+
 # Parametric Triggers
 * Heavy rainfall above threshold
 * Hazardous AQI levels
@@ -130,6 +156,7 @@ Key Techniques:
     Cross-validates claims using nearby worker activity
 * Device signal validation
     Motion sensor + network consistency checks
+In the prototype, this is implemented using a rule-based fraud scoring system with scope to evolve into adaptive models.
 # 4. Trust Score System (Reputation Model)
 * Each user is assigned a dynamic trust score
 
@@ -155,30 +182,49 @@ Final decision:
 Workers may attempt to exploit the system using GPS spoofing or fake claims.
 # Our Approach:
 # 1. DIFFERENTIATION : Real vs Spoofed Users
-Vytrix differentiates real and fake users using behavior + multi-signal validation, not just GPS.
-Real users show consistent movement, activity drop, and network instability, while spoofed users show sudden location jumps, no movement history, or mismatched signals.
-# 2. Data : Multi-Signal Detection
-We analyze multiple signals:
-* Movement & route history
-* Device sensors (motion)
-* Network conditions (IP, latency)
-* Weather & environmental data
-* Peer activity in same zone
-# 3. Trust Score System
-Each worker is assigned a dynamic trust score based on:
-* Claim history
-* Behavioral consistency
-* Past fraud flags
+GENUINE:
+* Continuous movement (road-based)
+* Realistic speed patterns
+* Activity drop during disruption
+* Network instability
 
-High trust → faster payouts
-Low trust → stricter validation
+SPOOFED:
+* Sudden jumps / static location
+* No deliveries
+* Perfect GPS but no motion
+* No history consistency
+# 2. Data : Multi-Signal Validation
+* Location: GPS + cell tower
+* Device: motion (accelerometer)
+* Network: IP + latency
+* Behavior: activity vs baseline
+* Environment: weather API
+* Peer: nearby worker activity
+# 3. Fraud Detection Logic (Prototype Implementation)
+fraud_score = 0
 
-# UX Balance
-* Low risk → instant payout
-* Medium risk → soft verification
-* High risk → “Under Review” (no immediate rejection)
-Ensures fairness while preventing fraud.
- 
+if gps_jump: fraud_score += 0.4
+
+if no_movement: fraud_score += 0.3
+
+if peer_mismatch: fraud_score += 0.3
+
+Decision:
+* `< 0.3 → Approve`
+* `0.3–0.6 → Verify`
+* `> 0.6 → Under Review` 
+# 4. Coordinated Fraud Detection
+Detects clusters of users with:
+ * same claim time
+ * similar behavior
+ * no movement
+→ Flag as Suspicious Cluster
+# 5. Explainability
+System shows why decision was made:
+ * Rain > threshold
+ * Activity drop > 60%
+ * Peer inactivity confirmed
+
 ----
 # Tech Stack
 **Frontend:**
@@ -209,6 +255,7 @@ Core functionality (registration, premium calculation, claims)
 * Fraud detection improvements
 * Dashboard and analytics
 ---
+
 # Conclusion
-Vytrix provides a smart, automated, and fraud-resistant solution to protect gig workers from income loss. By combining behavioral intelligence with parametric triggers, it ensures fair and timely compensation in real-world conditions.
+Vytrix provides a smart, automated, and fraud-resistant solution to protect gig workers from income loss. By combining behavioral intelligence with parametric triggers, it ensures fair and timely compensation in real-world conditions.The system evolves from a rule-based prototype to an adaptive, data-driven model with dynamic thresholds and learning-based fraud detection.
 ---
