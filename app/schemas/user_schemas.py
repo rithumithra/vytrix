@@ -6,7 +6,7 @@ from app.models.enums import DeliveryPlatform, VehicleType, GeographicArea, Veri
 
 class UserRegistrationRequest(BaseModel):
     name: str = Field(..., min_length=2, max_length=100, description="Full name of the user")
-    phone_number: str = Field(..., pattern=r"^[6-9]\d{9}$", description="10-digit Indian mobile number")
+    phone_number: str = Field(..., regex=r"^[6-9]\d{9}$", description="10-digit Indian mobile number")
     delivery_platform: DeliveryPlatform = Field(..., description="Primary delivery platform")
     vehicle_type: VehicleType = Field(..., description="Vehicle used for deliveries")
     primary_work_area: GeographicArea = Field(..., description="Primary work zone")
@@ -22,8 +22,8 @@ class UserRegistrationRequest(BaseModel):
         return v
 
     class Config:
-        from_attributes = True
-        json_schema_extra = {
+        orm_mode = True
+        schema_extra = {
             "example": {
                 "name": "Rajesh Kumar",
                 "phone_number": "9876543210",
@@ -50,8 +50,8 @@ class UserProfileResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        from_attributes = True
-        json_schema_extra = {
+        orm_mode = True
+        schema_extra = {
             "example": {
                 "user_id": "user_12345",
                 "name": "Rajesh Kumar",

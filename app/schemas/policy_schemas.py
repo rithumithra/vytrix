@@ -74,7 +74,7 @@ class PolicyResponse(BaseModel):
     created_at: datetime
 
     class Config:
-        from_attributes = True
+        orm_mode = True
         json_schema_extra = {
             "example": {
                 "policy_id": "policy_67890",

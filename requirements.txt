@@ -1,13 +1,13 @@
 # Core Framework
-fastapi==0.104.1
-uvicorn[standard]==0.24.0
-pydantic==2.5.0
+fastapi==0.68.0
+uvicorn[standard]==0.15.0
+pydantic==1.10.12
 
 # Database
-sqlalchemy==2.0.23
+sqlalchemy==1.4.48
 
 # External APIs
-httpx==0.25.2
+httpx==0.24.1
 requests==2.31.0
 
 # Utilities
