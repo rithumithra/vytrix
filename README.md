@@ -127,43 +127,35 @@ We propose a Mobile-first approach because:
 * Better accessibility during working hours
 * Supports future use of live device signals such as GPS continuity, motion data and real-time alerts.
 
-## Local Postgres and Deployment Setup
-### Use local PostgreSQL for development
-1. Start the backend services with Docker Compose:
-   ```bash
-   docker compose up -d postgres redis influxdb
-   ```
-2. The app now supports a `config.json` file at the repo root, so you do not need to manually create a full `DATABASE_URL`.
-   - A default `config.json` is already provided with local Postgres values.
-   - The app will use that file if `DATABASE_URL` is not set.
-3. Optionally, create a `.env` file in the repo root for secrets or overrides:
+## Local Database and Deployment Setup
+### Use local SQLite for development
+1. The app uses SQLite by default, which is a file-based database that doesn't require a server.
+   - A default `config.json` is provided with SQLite settings.
+   - The database file `vytrix.db` will be created automatically in the repo root.
+2. Optionally, create a `.env` file in the repo root for secrets or overrides:
    ```env
    # only needed if you want to override defaults
-   DATABASE_URL=postgresql://vytrix_user:vytrix_password@localhost:5432/vytrix_db
+   DATABASE_URL=sqlite:///./vytrix.db
    REDIS_URL=redis://localhost:6379/0
    INFLUXDB_URL=http://localhost:8086
    INFLUXDB_TOKEN=vytrix-super-secret-auth-token
    INFLUXDB_ORG=vytrix
    ```
-4. Run the app using the virtualenv and the `.env` file:
+3. Run the app using the virtualenv:
    ```bash
    source venv/bin/activate
    python run.py
    ```
 
-### Use a deployed PostgreSQL database
-- In production, set `DATABASE_URL` to your managed Postgres connection string.
-- Example:
-  ```env
-  DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname>
-  ```
-- Do not rely on the default SQLite URL for deployed environments.
+### Use a deployed database
+- In production, set `DATABASE_URL` to your managed database connection string.
+- For simple deployments, SQLite works fine, but for scalability, use PostgreSQL or another database.
 - Services like Heroku, Render, Railway, or any cloud provider will provide a database URL you can paste into `DATABASE_URL`.
 
 ### Notes
 - The app first reads `.env` and environment variables using Pydantic BaseSettings.
 - If `DATABASE_URL` is not set, the app will build the connection URL from `config.json`.
-- If `config.json` is absent, the app falls back to local Postgres defaults.
+- If `config.json` is absent, the app falls back to SQLite defaults.
 
 ## AI/ML Integration
 # 1. Risk Prediction

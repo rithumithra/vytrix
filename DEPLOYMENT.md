@@ -118,7 +118,7 @@ DATABASE_URL=sqlite:///./vytrix.db
 SECRET_KEY=your-secret-key-here
 ```
 
-> Note: The app also supports a root-level `config.json` for local development, so you do not need to hardcode a database URL during local setup. In production, use `DATABASE_URL` with your managed database.
+> Note: The app uses SQLite by default, which is a file-based database that doesn't require a server. The app also supports a root-level `config.json` for local development. In production, use `DATABASE_URL` with your managed database.
 
 ---
 

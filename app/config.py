@@ -18,17 +18,22 @@ def load_json_config():
 
 def build_database_url(cfg: dict) -> str:
     if not cfg:
-        return "postgresql://vytrix_user:vytrix_password@localhost:5432/vytrix_db"
+        return "sqlite:///./vytrix.db"
     if cfg.get("url"):
         return cfg["url"]
 
-    driver = cfg.get("driver", "postgresql")
-    user = cfg.get("user", "vytrix_user")
-    password = cfg.get("password", "vytrix_password")
-    host = cfg.get("host", "localhost")
-    port = cfg.get("port", 5432)
-    db = cfg.get("db", "vytrix_db")
-    return f"{driver}://{user}:{password}@{host}:{port}/{db}"
+    driver = cfg.get("driver", "sqlite")
+    if driver == "sqlite":
+        db_path = cfg.get("db", "./vytrix.db")
+        return f"sqlite:///{db_path}"
+    else:
+        # For PostgreSQL or others
+        user = cfg.get("user", "vytrix_user")
+        password = cfg.get("password", "vytrix_password")
+        host = cfg.get("host", "localhost")
+        port = cfg.get("port", 5432)
+        db = cfg.get("db", "vytrix_db")
+        return f"{driver}://{user}:{password}@{host}:{port}/{db}"
 
 
 json_config = load_json_config()
