@@ -114,11 +114,11 @@ const API_BASE_URL = 'https://your-backend-url.com';
 Set these in your deployment platform if you need to override defaults:
 ```
 PORT=8000
-DATABASE_URL=sqlite:///./vytrix.db
+DATABASE_URL=postgresql://<user>:<password>@<host>:5432/<dbname>
 SECRET_KEY=your-secret-key-here
 ```
 
-> Note: The app uses SQLite by default, which is a file-based database that doesn't require a server. The app also supports a root-level `config.json` for local development. In production, use `DATABASE_URL` with your managed database.
+> Note: For Railway deployment, add a PostgreSQL database to your project, and Railway will automatically set `DATABASE_URL`. The app also supports a root-level `config.json` for local development. In production, use `DATABASE_URL` with your managed database.
 
 ---
 

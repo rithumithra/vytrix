@@ -128,34 +128,48 @@ We propose a Mobile-first approach because:
 * Supports future use of live device signals such as GPS continuity, motion data and real-time alerts.
 
 ## Local Database and Deployment Setup
-### Use local SQLite for development
-1. The app uses SQLite by default, which is a file-based database that doesn't require a server.
-   - A default `config.json` is provided with SQLite settings.
-   - The database file `vytrix.db` will be created automatically in the repo root.
-2. Optionally, create a `.env` file in the repo root for secrets or overrides:
+### Use local PostgreSQL for development
+1. Start the backend services with Docker Compose:
+   ```bash
+   docker compose up -d postgres redis influxdb
+   ```
+2. The app supports a `config.json` file at the repo root for local database settings.
+   - A default `config.json` is provided with local Postgres values.
+   - The app will use that file if `DATABASE_URL` is not set.
+3. Optionally, create a `.env` file in the repo root for secrets or overrides:
    ```env
-   # only needed if you want to override defaults
-   DATABASE_URL=sqlite:///./vytrix.db
+   DATABASE_URL=postgresql://vytrix_user:vytrix_password@localhost:5432/vytrix_db
    REDIS_URL=redis://localhost:6379/0
    INFLUXDB_URL=http://localhost:8086
    INFLUXDB_TOKEN=vytrix-super-secret-auth-token
    INFLUXDB_ORG=vytrix
    ```
-3. Run the app using the virtualenv:
+4. Run the app using the virtualenv:
    ```bash
    source venv/bin/activate
    python run.py
    ```
 
-### Use a deployed database
+### Deploy to Railway
+1. Create a new project on Railway.
+2. Add a PostgreSQL database to your project (Railway provides this automatically).
+3. Railway will set `DATABASE_URL` environment variable automatically.
+4. Deploy your code to Railway (connect your GitHub repo or upload).
+5. The app will use Railway's `DATABASE_URL` for the database.
+6. Optionally, set other environment variables in Railway's dashboard if needed:
+   - `REDIS_URL` (if using Redis)
+   - `INFLUXDB_URL`, `INFLUXDB_TOKEN`, `INFLUXDB_ORG` (if using InfluxDB)
+   - `SECRET_KEY`
+   - `DEBUG=False` for production
+
+### Use a deployed database (other platforms)
 - In production, set `DATABASE_URL` to your managed database connection string.
-- For simple deployments, SQLite works fine, but for scalability, use PostgreSQL or another database.
 - Services like Heroku, Render, Railway, or any cloud provider will provide a database URL you can paste into `DATABASE_URL`.
 
 ### Notes
 - The app first reads `.env` and environment variables using Pydantic BaseSettings.
 - If `DATABASE_URL` is not set, the app will build the connection URL from `config.json`.
-- If `config.json` is absent, the app falls back to SQLite defaults.
+- If `config.json` is absent, the app falls back to local Postgres defaults.
 
 ## AI/ML Integration
 # 1. Risk Prediction
