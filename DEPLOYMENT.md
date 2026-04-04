@@ -111,12 +111,14 @@ const API_BASE_URL = 'https://your-backend-url.com';
 ```
 
 ### **3. Environment Variables (Optional)**
-Set these in your deployment platform:
+Set these in your deployment platform if you need to override defaults:
 ```
 PORT=8000
 DATABASE_URL=sqlite:///./vytrix.db
 SECRET_KEY=your-secret-key-here
 ```
+
+> Note: The app also supports a root-level `config.json` for local development, so you do not need to hardcode a database URL during local setup. In production, use `DATABASE_URL` with your managed database.
 
 ---
 
