@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vytrix Insurance Platform</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Vytrix Insurance Platform</h1>
+        <p>AI-powered parametric insurance for gig workers</p>
+
+        <h2>User Registration</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" required>
+            </div>
+            <div class="form-group">
+                <label for="vehicle">Vehicle Type:</label>
+                <select id="vehicle" required>
+                    <option value="bike">Bike</option>
+                    <option value="scooter">Scooter</option>
+                    <option value="car">Car</option>
+                </select>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+
+        <div id="registerResult" class="result"></div>
+
+        <h2>Premium Calculator</h2>
+        <form id="premiumForm">
+            <div class="form-group">
+                <label for="userId">User ID:</label>
+                <input type="text" id="userId" placeholder="Enter registered user ID" required>
+            </div>
+            <div class="form-group">
+                <label for="coverage">Coverage Type:</label>
+                <select id="coverage" required>
+                    <option value="basic">Basic Coverage</option>
+                    <option value="premium">Premium Coverage</option>
+                    <option value="comprehensive">Comprehensive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="zone">Zone:</label>
+                <input type="text" id="zone" placeholder="e.g., urban, suburban" required>
+            </div>
+            <button type="submit">Calculate Premium</button>
+        </form>
+
+        <div id="premiumResult" class="result"></div>
+    </div>
+
+    <script>
+        // Registration form handler
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('registerResult');
+
+            const data = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                vehicle_type: document.getElementById('vehicle').value
+            };
+
+            try {
+                const response = await fetch('/api/users/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                resultDiv.className = 'result success';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = `Registration successful: ${result.message}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Registration failed. Please try again.';
+            }
+        });
+
+        // Premium calculation form handler
+        document.getElementById('premiumForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const resultDiv = document.getElementById('premiumResult');
+
+            const data = {
+                user_id: document.getElementById('userId').value,
+                coverage_type: document.getElementById('coverage').value,
+                zone: document.getElementById('zone').value
+            };
+
+            try {
+                const response = await fetch('/api/policies/calculate-premium', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                resultDiv.className = 'result success';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = `Premium: ₹${result.premium} - ${result.details}`;
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+                resultDiv.textContent = 'Premium calculation failed. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
