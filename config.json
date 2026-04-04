@@ -1,11 +1,6 @@
 {
   "database": {
-    "driver": "postgresql",
-    "user": "vytrix_user",
-    "password": "vytrix_password",
-    "host": "localhost",
-    "port": 5432,
-    "db": "vytrix_db"
+    "url": "sqlite:///:memory:"
   },
   "redis": {
     "url": "redis://localhost:6379/0"
