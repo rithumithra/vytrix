@@ -11,16 +11,18 @@ import os
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    
     print("🛡️ Starting Vytrix Insurance Platform...")
-    print("📍 API will be available at: http://localhost:8000")
+    print(f"📍 API will be available at: http://0.0.0.0:{port}")
     print("🌐 Frontend will be available at: frontend/index.html")
-    print("📚 API Documentation: http://localhost:8000/docs")
+    print(f"📚 API Documentation: http://0.0.0.0:{port}/docs")
     print("=" * 50)
     
     uvicorn.run(
         "app.main:app",
         host="0.0.0.0",
-        port=8000,
-        reload=True,
+        port=port,
+        reload=False,
         log_level="info"
     )
