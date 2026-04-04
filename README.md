@@ -68,6 +68,14 @@ This allows workers to choose protection for the hours they depend on most. A wo
    * Payout simulated
 6.Upon successful verification, payout is processed (simulated)
 ---
+
+## System Workflow
+
+The following diagram represents the end-to-end automated workflow of Vytrix, from user onboarding to claim decision and payout.
+
+![Workflow Diagram](./workflow.png)
+
+
 # Weekly Pricing Model
 Premium is calculated on a weekly basis based on:
 * Area risk level
