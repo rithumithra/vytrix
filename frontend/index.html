@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vytrix Insurance Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .page {
+            display: none;
+            padding: 30px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4facfe;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .premium-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #4facfe;
+        }
+
+        .premium-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .premium-row.total {
+            font-weight: bold;
+            font-size: 18px;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 15px;
+        }
+
+        .simulation-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .sim-btn {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .sim-btn:hover {
+            border-color: #4facfe;
+            background: #f0f8ff;
+        }
+
+        .sim-btn.rain {
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .sim-btn.fraud {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .sim-btn.no-activity {
+            border-color: #f39c12;
+            color: #f39c12;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .status.approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status.under-review {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .score-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .score-item {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .score-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .score-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .reasons {
+            margin-top: 15px;
+        }
+
+        .reasons h4 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .reasons ul {
+            list-style: none;
+        }
+
+        .reasons li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .reasons li:before {
+            content: "•";
+            color: #4facfe;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4facfe;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-btn {
+            background: #6c757d;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Vytrix</h1>
+            <p>AI-Powered Income Protection for Gig Workers</p>
+        </div>
+
+        <!-- Registration Page -->
+        <div id="registration-page" class="page active">
+            <h2 style="margin-bottom: 20px; color: #333;">Registration</h2>
+            <form id="registration-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" required placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" required placeholder="10-digit mobile number" pattern="[6-9][0-9]{9}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="zone">Zone</label>
+                    <select id="zone" name="zone" required>
+                        <option value="">Select your work zone</option>
+                        <option value="bangalore_central">Bangalore Central</option>
+                        <option value="bangalore_north">Bangalore North</option>
+                        <option value="bangalore_south">Bangalore South</option>
+                        <option value="mumbai_central">Mumbai Central</option>
+                        <option value="delhi_central">Delhi Central</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="shift">Shift</label>
+                    <select id="shift" name="shift" required>
+                        <option value="">Select your preferred shift</option>
+                        <option value="lunch_peak">Lunch Peak (11 AM - 3 PM)</option>
+                        <option value="dinner_peak">Dinner Peak (6 PM - 10 PM)</option>
+                        <option value="full_shift">Full Shift (8 AM - 10 PM)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="platform">Delivery Platform</label>
+                    <select id="platform" name="platform" required>
+                        <option value="">Select your platform</option>
+                        <option value="swiggy">Swiggy</option>
+                        <option value="zomato">Zomato</option>
+                        <option value="zepto">Zepto</option>
+                        <option value="amazon">Amazon</option>
+                        <option value="dunzo">Dunzo</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="vehicle">Vehicle Type</label>
+                    <select id="vehicle" name="vehicle" required>
+                        <option value="">Select your vehicle</option>
+                        <option value="bike">Bike</option>
+                        <option value="scooter">Scooter</option>
+                        <option value="bicycle">Bicycle</option>
+                        <option value="car">Car</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="earnings">Average Daily Earnings (₹)</label>
+                    <input type="number" id="earnings" name="earnings" required min="200" max="2000" placeholder="600">
+                </div>
+                
+                <button type="submit" class="btn">Continue</button>
+            </form>
+        </div>
+
+        <!-- Premium Page -->
+        <div id="premium-page" class="page">
+            <button class="btn back-btn" onclick="showPage('registration-page')">← Back</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Policy & Premium</h2>
+            
+            <div class="premium-card">
+                <h3 style="margin-bottom: 15px; color: #4facfe;">Dynamic Premium Calculation</h3>
+                <div class="premium-row">
+                    <span>Base Premium:</span>
+                    <span id="base-premium">₹200</span>
+                </div>
+                <div class="premium-row">
+                    <span>Zone Risk Adjustment:</span>
+                    <span id="zone-adjustment">+₹20</span>
+                </div>
+                <div class="premium-row">
+                    <span>Weather Risk Adjustment:</span>
+                    <span id="weather-adjustment">+₹10</span>
+                </div>
+                <div class="premium-row total">
+                    <span>Final Premium:</span>
+                    <span id="final-premium">₹230</span>
+                </div>
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #ddd;">
+                    <div class="premium-row">
+                        <span>Coverage Amount:</span>
+                        <span id="coverage-amount">₹2,300</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="activatePolicy()">Activate Plan</button>
+        </div>
+
+        <!-- Trigger Page -->
+        <div id="trigger-page" class="page">
+            <button class="btn back-btn" onclick="showPage('premium-page')">← Back</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Test Scenarios</h2>
+            <p style="margin-bottom: 20px; color: #666;">Click on any scenario to simulate claim processing:</p>
+            
+            <div class="simulation-buttons">
+                <button class="sim-btn rain" onclick="simulateScenario('rain')">
+                    🌧️ Simulate Rain
+                    <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Heavy rainfall affecting deliveries</div>
+                </button>
+                
+                <button class="sim-btn fraud" onclick="simulateScenario('fraud')">
+                    ⚠️ Simulate Fraud
+                    <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Suspicious GPS and activity patterns</div>
+                </button>
+                
+                <button class="sim-btn no-activity" onclick="simulateScenario('no-activity')">
+                    📵 No Activity
+                    <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">Complete cessation of delivery activity</div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Result Page -->
+        <div id="result-page" class="page">
+            <button class="btn back-btn" onclick="showPage('trigger-page')">← Back to Scenarios</button>
+            <h2 style="margin-bottom: 20px; color: #333;">Claim Result</h2>
+            
+            <div class="result-card">
+                <div class="result-header">
+                    <h3>Claim Processing Complete</h3>
+                    <span id="claim-status" class="status approved">APPROVED</span>
+                </div>
+                
+                <div class="score-display">
+                    <div class="score-item">
+                        <div class="score-value" id="opportunity-score">0.78</div>
+                        <div class="score-label">Opportunity Score</div>
+                    </div>
+                    <div class="score-item">
+                        <div class="score-value" id="fraud-score">0.12</div>
+                        <div class="score-label">Fraud Score</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 15px 0;">
+                    <div style="font-size: 14px; color: #666;">Threshold: <span id="threshold">0.70</span></div>
+                    <div style="font-size: 18px; font-weight: bold; color: #4facfe; margin-top: 10px;" id="payout-amount"></div>
+                </div>
+                
+                <div class="reasons">
+                    <h4>Decision Factors:</h4>
+                    <ul id="reasons-list">
+                        <li>Rain > threshold</li>
+                        <li>Activity drop 65%</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="showPage('trigger-page')">Test Another Scenario</button>
+        </div>
+
+        <!-- Loading Page -->
+        <div id="loading-page" class="page">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Processing your request...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let currentUser = null;
+        let currentPolicy = null;
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function showLoading() {
+            showPage('loading-page');
+        }
+
+        document.getElementById('registration-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading();
+            
+            const formData = new FormData(e.target);
+            const userData = {
+                name: formData.get('name'),
+                phone_number: formData.get('phone'),
+                delivery_platform: formData.get('platform'),
+                vehicle_type: formData.get('vehicle'),
+                primary_work_area: formData.get('zone'),
+                average_daily_earnings: parseFloat(formData.get('earnings'))
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/users/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                if (response.ok) {
+                    currentUser = await response.json();
+                    await calculatePremium(formData.get('zone'), formData.get('shift'));
+                } else {
+                    const error = await response.json();
+                    alert('Registration failed: ' + error.detail);
+                    showPage('registration-page');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed. Please try again.');
+                showPage('registration-page');
+            }
+        });
+
+        async function calculatePremium(zone, shift) {
+            try {
+                const response = await fetch(`${API_BASE}/policies/calculate-premium`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUser.user_id,
+                        coverage_type: shift,
+                        zone: zone
+                    })
+                });
+                
+                if (response.ok) {
+                    const premiumData = await response.json();
+                    updatePremiumDisplay(premiumData);
+                    showPage('premium-page');
+                } else {
+                    throw new Error('Premium calculation failed');
+                }
+            } catch (error) {
+                console.error('Premium calculation error:', error);
+                alert('Premium calculation failed. Please try again.');
+                showPage('registration-page');
+            }
+        }
+
+        function updatePremiumDisplay(premiumData) {
+            document.getElementById('base-premium').textContent = `₹${premiumData.base_premium}`;
+            document.getElementById('zone-adjustment').textContent = `+₹${premiumData.zone_risk_adjustment}`;
+            document.getElementById('weather-adjustment').textContent = `+₹${premiumData.weather_risk_adjustment}`;
+            document.getElementById('final-premium').textContent = `₹${premiumData.final_premium}`;
+            document.getElementById('coverage-amount').textContent = `₹${premiumData.coverage_amount.toLocaleString()}`;
+            
+            // Store premium data for policy activation
+            window.premiumData = premiumData;
+        }
+
+        async function activatePolicy() {
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/policies/activate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUser.user_id,
+                        coverage_type: window.premiumData.coverage_type,
+                        premium_amount: window.premiumData.final_premium
+                    })
+                });
+                
+                if (response.ok) {
+                    currentPolicy = await response.json();
+                    showPage('trigger-page');
+                } else {
+                    throw new Error('Policy activation failed');
+                }
+            } catch (error) {
+                console.error('Policy activation error:', error);
+                alert('Policy activation failed. Please try again.');
+                showPage('premium-page');
+            }
+        }
+
+        async function simulateScenario(scenarioType) {
+            showLoading();
+            
+            const endpoints = {
+                'rain': '/simulate/rain',
+                'fraud': '/simulate/fraud',
+                'no-activity': '/simulate/no-activity'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoints[scenarioType]}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUser.user_id
+                    })
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    displayResult(result);
+                } else {
+                    throw new Error('Simulation failed');
+                }
+            } catch (error) {
+                console.error('Simulation error:', error);
+                alert('Simulation failed. Please try again.');
+                showPage('trigger-page');
+            }
+        }
+
+        function displayResult(result) {
+            document.getElementById('opportunity-score').textContent = result.opportunity_score.toFixed(2);
+            document.getElementById('fraud-score').textContent = result.fraud_score.toFixed(2);
+            document.getElementById('threshold').textContent = result.threshold.toFixed(2);
+            
+            const statusElement = document.getElementById('claim-status');
+            statusElement.textContent = result.status;
+            statusElement.className = `status ${result.status.toLowerCase().replace('_', '-')}`;
+            
+            const payoutElement = document.getElementById('payout-amount');
+            if (result.claim_amount) {
+                payoutElement.textContent = `Payout: ₹${result.claim_amount}`;
+                payoutElement.style.display = 'block';
+            } else {
+                payoutElement.style.display = 'none';
+            }
+            
+            const reasonsList = document.getElementById('reasons-list');
+            reasonsList.innerHTML = '';
+            result.reasons.forEach(reason => {
+                const li = document.createElement('li');
+                li.textContent = reason;
+                reasonsList.appendChild(li);
+            });
+            
+            showPage('result-page');
+        }
+    </script>
+</body>
+</html>
