@@ -39,7 +39,7 @@ export default function RegisterAccount() {
   };
   // 🔥 VERIFY OTP + CREATE ACCOUNT
   const verifyOtp = async () => {
-    const res = await fetch("http://127.0.0.1:5000/verify_otp", {
+    const res = await fetch("https://vytrix-backend.onrender.com/verify_otp", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
