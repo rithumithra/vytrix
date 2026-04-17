@@ -12,7 +12,7 @@ export default function Scenario() {
 
   const simulate = async (type) => {
     try {
-      const res = await fetch("http://127.0.0.1:5000/claim", {
+      const res = await fetch("https://vytrix-backend.onrender.com/claim", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
