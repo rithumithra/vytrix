@@ -321,7 +321,7 @@ def auto_monitor():
             for p in profiles:
                 weather = get_weather(p.zone)
 
-                opp = calculate_score(weather)
+                opp = ai_opportunity_model(weather)
                 fraud = fraud_score()
 
                 if opp > 0.7 and fraud < 0.3:
@@ -335,7 +335,8 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
 
-
-    app.run(debug=True)
+    import os
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
 
 
